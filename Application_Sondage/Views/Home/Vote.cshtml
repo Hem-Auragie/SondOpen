@@ -1,0 +1,31 @@
+﻿@model Application_Sondage.Models.Sondage
+
+@{
+    ViewBag.Title = "Vote";
+}
+
+<div class="box">
+    <h2>@Model.Question</h2>
+    <form method="post" action="">
+        <ul>
+            @{
+                foreach (var choix in Model.IntituleChoix)
+                {
+                    <li>
+                        @{if (Model.ChoixMultiple)
+                            {
+                                <input id="1"  name="multiplchoise" value ="@choix" type="checkbox">
+                            }
+                            else
+                            {
+                                <input id="1" name="singleChoiceId" value="@choix" type="radio">
+                            }}
+                        <label for="1">@choix</label>
+                    </li>
+                }
+            }
+        </ul>
+        <input class="bt_link" type="submit" value="Voter" />
+    </form>
+</div>
+

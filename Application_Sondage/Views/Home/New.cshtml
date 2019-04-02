@@ -1,0 +1,27 @@
+﻿@{
+    ViewBag.Title = "New";
+}
+
+<section class="boxNew">
+    <!-- Partie création question et réponse du sondage-->
+    <form method="POST" action="@Url.Action("PosteNew", "Home")">
+        <input type="text" name="question" class="new_input question" autofocus placeholder="Saisissez une question">
+        <input class="new_input" name="reponseUn" type="text" placeholder="[1] - Saisissez un choix" />
+        <input class="new_input" name="reponseDeux" type="text" placeholder="[2] - Saisissez un choix" />
+        <input class="new_input" name="reponseTrois" type="text" placeholder="[3] - Saisissez un choix" />
+        <input class="new_input" name="reponseQuatre" type="text" placeholder="[4] - Saisissez un choix" />
+
+        <!-- Options du sondage-->
+        <ul id="inputs"></ul>
+        <input id="b1" name="choixMultiple" type="checkbox" value="true">
+        <label for="b1">Choix multiples.</label>
+        <br />
+        <input id="b2" name="voteMultiple" checked="checked" type="checkbox" value="true">
+        <label for="b2">Forcer un vote par personne.</label>
+        <div class="h_center">
+            <input type="submit" value="créer">
+        </div>
+    </form>
+</section>
+
+

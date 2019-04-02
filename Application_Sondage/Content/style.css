@@ -1,0 +1,156 @@
+﻿
+/* Contenu de fond de la page */
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100vh;
+    padding: 0;
+    margin: 0;
+    background-image: url("/Content/background.jpg");
+    color: white;
+    font-size: small;
+    font-family: Verdana, "DejaVu Sans", "Bitstream Vera Sans", Geneva, sans-serif;
+}
+
+/* Contenur principal de la page */
+.main_content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+header {
+    display: flex;
+    background-color: rgba(0, 0, 0, 0.6);
+    justify-content: center;
+    margin-left: 30%;
+    width: 40%;
+    height: 20%;
+    border-radius: 10px;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* Paramètres pour les réponses et les questions */
+h1 {
+    font-size: large;
+}
+
+h2 {
+    text-align: center;
+}
+
+
+.box {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 1.5%;
+    padding: 0.4% 2% 2% 2%;
+}
+
+.results {
+    font-size: 2em;
+}
+
+/* for a div containing a single element:
+ * centers the element
+ * h(orizontally) or
+ * v(vertically)
+ */
+.h_center {
+    display: flex;
+    justify-content: center;
+    margin-top: 5%;
+}
+
+.v_center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.vertical {
+    display: flex;
+    flex-direction: column;
+}
+
+ul {
+    list-style: none;
+    margin-left: 0;
+    padding-left: 0;
+}
+
+li {
+    margin-bottom: 0px; /* adapter */
+}
+
+.boxPollPage {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 1.5%;
+    padding: 0.4% 2% 2% 2%;
+    width: 20%;
+    height: 10%;
+}
+
+.namePoll {
+    text-align: center;
+}
+
+.redtext {
+    color: red;
+}
+
+a {
+    color: white;
+    font-weight: bold;
+}
+
+.chart {
+    max-width: 30vw;
+    min-width: 30vw;
+    margin: 0;
+    padding: 0;
+}
+
+.colorhint {
+    width: 12%;
+}
+
+a {
+    color: white;
+    text-decoration: none;
+}
+
+.boxNew {
+    background-color: rgba(0, 0, 0, 0.6);
+    border-radius: 1.5%;
+    padding-top: 4%;
+    padding: 0.4% 2% 2% 3%;
+    display: flex;
+    flex-direction: column;
+}
+
+.new_input {
+    border: 2px solid red;
+    width: 90%;
+    padding: 1.5%;
+    margin-top: 2%;
+    margin-bottom: 10px;
+    border-radius: 4px;
+}
+
+.question {
+    margin-top: 10%;
+    padding: 2%;
+    font-size: 16px;
+}
+
+
+
+.marge {
+    margin-left: 5em;
+}

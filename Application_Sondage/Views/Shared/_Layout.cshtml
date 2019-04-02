@@ -1,0 +1,21 @@
+﻿<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Sond'Open</title>
+    <link rel="icon" href="/Content/icon.png">
+    <link href="/Content/style.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+    <header>
+        <a class="plain" href="@Url.Action("Index", "Home")"><img src="/Content/logo.png" /></a>
+    </header>
+    <section class="main_content">
+        @RenderBody()
+    </section>
+    <div></div>
+    <footer>
+        <a href="@Url.Action("Manuel", "Home")">Manuel d'utilisation</a> | <a href="@Url.Action("Confidentialite", "Home")">Confidentialité</a> | <a href="@Url.Action("APropos", "Home")">A propos</a>
+    </footer>
+</body>
+</html>
