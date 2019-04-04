@@ -1,8 +1,4 @@
-﻿@{
-    ViewBag.Title = "New";
-}
-
-<section class="boxNew">
+﻿<section class="boxNew">
     <!-- Partie création question et réponse du sondage-->
     <form method="POST" action="@Url.Action("PosteNew", "Home")">
         <input type="text" name="question" class="new_input question" autofocus placeholder="Saisissez une question">
