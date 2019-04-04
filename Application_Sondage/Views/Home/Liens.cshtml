@@ -1,20 +1,15 @@
-﻿@Model Application_Sondage
-
-@{
-    ViewBag.Title = "Liens";
-}
-
+﻿@model int
 <section class="box">
     <h2>Félicitation, vous avez bien crée votre sondage.</h2>
     <h6><b>Veillez à bien garder le lien de désactivation dans un coin, il ne vous sera plus communiquer !</b></h6>
     <h3>
-        <a href="/Desactiver/@Model.Id">[Desactiver]- Lien permettant d'accéder à la page de désactivation du sondage</a>
+        <a href="@Url.Action("Desactiver" , new { id = Model })">[Desactiver]- Lien permettant d'accéder à la page de désactivation du sondage</a>
     </h3>
     <h3>
-        <a href="/Resultat/@Model.Id">[Résultat(s)]- Lien permettant d'accéder aux résulats de mon sondage</a>
+        <a href="@Url.Action("Resultat" , new { id = Model })">[Résultat(s)]- Lien permettant d'accéder aux résulats de mon sondage</a>
     </h3>
     <h3>
-        <a href="/Vote/@Model.id">[Vote]- Lien permettant d'accéder à la page de vote</a>
+        <a href="@Url.Action("Vote" , new { id = Model })">[Vote]- Lien permettant d'accéder à la page de vote</a>
     </h3>
     <div class="h_center">
         <form action="Index">

@@ -22,13 +22,18 @@ namespace Application_Sondage.Controllers
             return View();
         }
 
-        public ActionResult Liens()
+        public ActionResult Desactiver()
         {
             return View();
         }
 
-        //FONCTIONNE
-        //Crée et sotck le sondage en BDD
+        //Mets aux liens l'id demander
+        public ActionResult Liens(int id)
+        {
+            return View(id);
+        }
+
+        //Crée et stock le sondage en BDD
         public ActionResult PosteNew(string question, string reponseUn, string reponseDeux, string reponseTrois, string reponseQuatre, bool? choixMultiple)
         {
             List<string> ListeDeReponse = new List<string>();
@@ -58,17 +63,15 @@ namespace Application_Sondage.Controllers
             }
 
             int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ReponseNonNul);
-            return RedirectToAction(nameof(Liens), new { id = id });
+            return RedirectToAction(nameof(Liens), new { ID = id });
         }
 
-        //FONCTIONNE
         //Page d'accueil de création de sondage
         public ActionResult New()
         {           
             return View();
         }
 
-        //FONCTIONNE 
         //Page de vote
         public ActionResult Vote(int id)
         {

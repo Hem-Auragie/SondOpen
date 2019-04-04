@@ -99,7 +99,6 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\Choix_vote.cs" />
     <Compile Include="Models\DataAccess.cs" />
     <Compile Include="Models\GenereCleUnique.cs" />
     <Compile Include="Models\Sondage.cs" />
@@ -118,7 +117,7 @@
     <Content Include="Views\Home\Vote.cshtml" />
     <Content Include="Views\Home\Liens.cshtml" />
     <Content Include="Views\Home\Resultat.cshtml" />
-    <Content Include="Views\Home\Desactivation.cshtml" />
+    <Content Include="Views\Home\Desactiver.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
+using System.Data;
 
 namespace Application_Sondage.Models
 {
@@ -83,7 +84,7 @@ namespace Application_Sondage.Models
             using (SqlConnection connection = new SqlConnection(ChaineConnexionBDD))
             {
                 connection.Open();
-                var transaction = connection.BeginTransaction();
+                var transaction = connection.BeginTransaction(IsolationLevel.Serializable);
                 //Ajoute le choix multiples et la question  dans la table sondage et stock l'id
                 using (SqlCommand command = new SqlCommand("INSERT INTO Sondage (ChoixMultiple,Question,NbVotes) OUTPUT INSERTED.IdSondage VALUES(@Choix, @Question,0)", connection, transaction))
                 {
