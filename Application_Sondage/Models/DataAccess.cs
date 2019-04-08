@@ -22,10 +22,10 @@ namespace Application_Sondage.Models
 
     public class DataAccess
     {
-        //CHEMIN BASE DE DONNES
+        //CHEMIN BASE DE DONNEES
         const string ChaineConnexionBDD = @"Server=.\SQLEXPRESS;Database=SondOpen;Integrated Security = true";
 
-        //REQUETE QUI RECUPERE LA QUESTION CORRESPONDANT A L'ID DONNER
+        //REQUETE QUI RECUPERE UN SONDAGE
         #region [BDD] - Recupère un sondage existant
         public static Sondage RecupereSondageEnBDD(int Id)
         {
@@ -51,7 +51,7 @@ namespace Application_Sondage.Models
                         throw new SondageNonTrouverException();
                     }
                 }
-                        
+
                 SqlCommand command2 = new SqlCommand("SELECT IntituleChoix FROM Choix WHERE FK_Id_Sondage =@id", connection);
                 command2.Parameters.AddWithValue("@id", Id);
                 using (SqlDataReader DataReader2 = command2.ExecuteReader())
@@ -62,12 +62,12 @@ namespace Application_Sondage.Models
 
                         ReponseCourante.Add(Reponse);
                     }
-                }                    
+                }
             }
 
-            Sondage RecupSonsage = new Sondage(Id,Question, ReponseCourante, ChoixMultiple);
+            Sondage RecupSonsage = new Sondage(Id, Question, ReponseCourante, ChoixMultiple);
 
-            return RecupSonsage;          
+            return RecupSonsage;
         }
         #endregion
 
@@ -95,7 +95,7 @@ namespace Application_Sondage.Models
                     recupId = (int)command.ExecuteScalar();
                 }
 
-                foreach(var uneReponse in IntituleChoix)
+                foreach (var uneReponse in IntituleChoix)
                 {
                     //Ajoute les choix du sondage et insert l'id récuperer précedement.
                     using (SqlCommand command = new SqlCommand("INSERT INTO Choix (IntituleChoix,FK_Id_Sondage,NbVotes) VALUES(@IntituleChoix, @IdSondage,0)", connection, transaction))
@@ -109,6 +109,18 @@ namespace Application_Sondage.Models
                 transaction.Commit();
                 return recupId;
             }
+        }
+        #endregion
+
+        //DESACTIVER UN SONDAGE
+        #region Désactiver un sondage
+        public static void DesactiverUnSondageEnBDD(int Id)
+        {
+            SqlConnection connection = new SqlConnection(ChaineConnexionBDD);            
+            connection.Open();
+            SqlCommand command = new SqlCommand("UPDATE Sondage SET Etat = 1  WHERE IdSondage = @IdSondage ", connection);
+            command.Parameters.AddWithValue("@IdSondage", Id);
+            SqlDataReader DataReader = command.ExecuteReader();
         }
         #endregion
     }

@@ -22,8 +22,9 @@ namespace Application_Sondage.Controllers
             return View();
         }
 
-        public ActionResult Desactiver()
+        public ActionResult Desactiver(int id)
         {
+            DataAccess.DesactiverUnSondageEnBDD(id);
             return View();
         }
 
