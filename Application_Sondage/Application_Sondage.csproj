@@ -122,6 +122,9 @@
     <Content Include="Views\Home\Resultat.cshtml" />
     <Content Include="Views\Home\Desactiver.cshtml" />
     <Content Include="Views\Home\ConfirmationVote.cshtml" />
+    <Content Include="Views\Home\ErreurDesactiver.cshtml" />
+    <Content Include="Views\Home\ErreurQuestionSondage.cshtml" />
+    <Content Include="Views\Home\ErreurReponseSondage.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

@@ -1,0 +1,18 @@
+﻿@model int
+
+<section class="box">
+    <h2>SONDAGE DESACTIVER</h2>
+    <b>Ce sondage est actuellement désactivé.</b>
+    <br />
+    <b>Vous pouvez tous de même consulter les résultats de celui-ci.</b>
+    <div class="h_center">
+        <form action="@Url.Action("Index", "Home")">
+            <input type="submit" value="Retour accueil">
+        </form>
+    </div>
+    <div class="h_center">
+        <form action="@Url.Action("Resultat", "Home", new { id = Model })">
+            <input type="submit" value="Résultats">
+        </form>
+    </div>
+</section>

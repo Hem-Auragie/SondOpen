@@ -55,31 +55,54 @@ namespace Application_Sondage.Controllers
 
             if (string.IsNullOrWhiteSpace(question))
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Erreur veuillez entrez une question.");
+                return RedirectToAction(nameof(ErreurQuestionSondage));
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Erreur veuillez entrez une question.");
             }
 
             if (ReponseNonNul.Count < 2)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Erreur veuillez entrez au moins 2 réponses.");
+                return RedirectToAction(nameof(ErreurReponseSondage));
+                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Erreur veuillez entrez au moins 2 réponses.");
             }
 
             int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ReponseNonNul);
             return RedirectToAction(nameof(Liens), new { ID = id });
         }
 
-        //Page d'accueil de création de sondage
+        //[AFF] - Page création de sondage
         public ActionResult New()
         {
             return View();
         }
 
-        //Page vote d'affichage
+        //[AFF] - Page d'erreur sondage Question
+        public ActionResult ErreurQuestionSondage()
+        {
+            return View();
+        }
+
+        //[AFF] - Page d'erreur sondage Reponse
+        public ActionResult ErreurReponseSondage()
+        {
+            return View();
+        }
+
+        //[AFF] - Page de retour d'erreur de vote
+        public ActionResult ErreurDesactiver(int id)
+        {
+            return View(id);
+        }
+
+        //[AFF] - Page de vote
         public ActionResult Vote(int id)
         {
+            //Si le sondage est désactiver 
             if (DataAccess.CheckEtatSondageEnBDD(id) == true)
             {
-                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Le sondage est désactiver, vous pouvez uniquement accéder aux résultats.");
+                //Renvoie la page ErreurDesactivé
+                return RedirectToAction(nameof(ErreurDesactiver), new { ID = id });
             }
+            //Sinon
             else
             {
                 //Recupère le sondage en fonction de l'id
@@ -87,20 +110,23 @@ namespace Application_Sondage.Controllers
             }
         }
 
-        //Le vote est ajouter sur cet page
+        //[BDD] - Ajoute des votes
         public ActionResult ConfirmeVote(int id, List<string> multiplechoise)
         {
+            //Ajoute un votant dans la base de données dans la table sondage
             DataAccess.AjouteUnVotantAuSondage(id);
 
+            //Pour chaque réponse cocher, incrémente de 1 le nombre de vote dans la table Choix
             foreach(var NomChoix in multiplechoise)
             {
                 DataAccess.AjouteUnVoteEnBDD(id, NomChoix);
             }
   
+            //Retourne automatiquement vers la page de Confirmation de vote.
             return RedirectToAction(nameof(ConfirmationVote), new { ID = id });
         }
 
-        //Page de confirmation de vote
+        //[AFF] - Page de confirmation de vote
         public ActionResult ConfirmationVote(int id)
         {
             return View(id);
