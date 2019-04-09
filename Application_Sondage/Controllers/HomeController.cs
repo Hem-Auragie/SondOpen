@@ -24,8 +24,18 @@ namespace Application_Sondage.Controllers
 
         public ActionResult Desactiver(int id)
         {
+            return View(id);
+        }
+
+        public ActionResult ConfirmationDesactivation(int id)
+        {
+            return View(id);
+        }
+
+        public ActionResult DesactivationSondage(int id)
+        {
             DataAccess.DesactiverUnSondageEnBDD(id);
-            return View();
+            return RedirectToAction(nameof(ConfirmationDesactivation), new { ID = id });
         }
 
         //Mets aux liens l'id demander
