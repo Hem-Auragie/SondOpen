@@ -29,7 +29,7 @@ namespace Application_Sondage.Models
         #region [BDD] - Recupère un sondage existant
         public static Sondage RecupereSondageEnBDD(int Id)
         {
-            List<string> ReponseCourante = new List<string>();
+            List<Choix> ReponsesCourante = new List<Choix>();
             string Question = string.Empty;
             bool ChoixMultiple;
 
@@ -52,20 +52,23 @@ namespace Application_Sondage.Models
                     }
                 }
 
-                SqlCommand command2 = new SqlCommand("SELECT IntituleChoix FROM Choix WHERE FK_Id_Sondage =@id", connection);
+                SqlCommand command2 = new SqlCommand("SELECT IdChoix, IntituleChoix FROM Choix WHERE FK_Id_Sondage =@id", connection);
                 command2.Parameters.AddWithValue("@id", Id);
                 using (SqlDataReader DataReader2 = command2.ExecuteReader())
-                {
+                {                    
                     while (DataReader2.Read())
                     {
-                        string Reponse = (string)DataReader2["IntituleChoix"];
+                        int IdChoix = (int)DataReader2["IdChoix"];
+                        string valeurChoix = (string)DataReader2["IntituleChoix"];
 
-                        ReponseCourante.Add(Reponse);
+                        Choix Reponse = new Choix(IdChoix, valeurChoix);                       
+
+                        ReponsesCourante.Add(Reponse);
                     }
                 }
             }
 
-            Sondage RecupSonsage = new Sondage(Id, Question, ReponseCourante, ChoixMultiple);
+            Sondage RecupSonsage = new Sondage(Id, Question, ReponsesCourante, ChoixMultiple);
 
             return RecupSonsage;
         }
@@ -116,11 +119,79 @@ namespace Application_Sondage.Models
         #region Désactiver un sondage
         public static void DesactiverUnSondageEnBDD(int Id)
         {
-            SqlConnection connection = new SqlConnection(ChaineConnexionBDD);            
+            SqlConnection connection = new SqlConnection(ChaineConnexionBDD);
             connection.Open();
             SqlCommand command = new SqlCommand("UPDATE Sondage SET Etat = 1  WHERE IdSondage = @IdSondage ", connection);
             command.Parameters.AddWithValue("@IdSondage", Id);
             SqlDataReader DataReader = command.ExecuteReader();
+        }
+        #endregion
+
+        //CHECK ETAT SONDAGE
+        #region Check l'état du sondage
+        public static bool CheckEtatSondageEnBDD(int Id)
+        {
+            bool recupEtat;
+            SqlConnection connection = new SqlConnection(ChaineConnexionBDD);
+            connection.Open();
+            SqlCommand command = new SqlCommand("Select Etat FROM Sondage WHERE IdSondage = @IdSondage ", connection);
+
+            command.Parameters.AddWithValue("@IdSondage", Id);
+            SqlDataReader DataReader = command.ExecuteReader();
+
+            if (DataReader.Read())
+            {
+                recupEtat = DataReader.GetBoolean(0);
+            }
+            else
+            {
+                throw new SondageNonTrouverException();
+            }
+            return recupEtat;
+        }
+        #endregion
+
+        //FAIRE UN(DES) VOTE(S)
+        #region Faire un ou plusieurs votes
+        public static void AjouteUnOuPLusieursVotesEnBDD(int IdSondage, List<Choix> ListeDeChoix)
+        {
+
+            SqlConnection connection = new SqlConnection(ChaineConnexionBDD);
+            connection.Open();
+
+            //Regarde si l'ID existe
+            using (SqlCommand command = new SqlCommand("SELECT IdSondage WHERE IdSondage = @IdSondage ", connection))
+            {
+                var transaction = connection.BeginTransaction(IsolationLevel.Serializable);
+                command.Parameters.AddWithValue("@IdSondage", IdSondage);
+                SqlDataReader DataReader = command.ExecuteReader();
+
+                if (!DataReader.Read())
+                {
+                    throw new SondageNonTrouverException();
+                }
+                else
+                {
+                    //Ajoute un votant au nombre total de vote sur le sondage
+                    using (SqlCommand command2 = new SqlCommand("UPDATE Sondage SET NbVotes = Nbvotes+1 WHERE IdSondage = @IdSondage ", connection, transaction))
+                    {
+                        command2.Parameters.AddWithValue("@IdSondage", IdSondage);
+                        command2.ExecuteNonQuery();
+                    }
+
+                    //Ajoute un ou plusieurs vote sur le sondage
+                    foreach (var IdChoixReponse in ListeDeChoix)
+                    {
+                        using (SqlCommand command3 = new SqlCommand("UPDATE Choix SET NbVotes = Nbvotes+1 WHERE FK_Id_Sondage = @IdSondage AND IdChoix = @IdChoix ", connection, transaction))
+                        {
+                            command.Parameters.AddWithValue("@IdChoix", IdChoixReponse);
+                            command3.Parameters.AddWithValue("@IdSondage", IdSondage);
+                            command3.ExecuteNonQuery();
+                        }
+                    }
+                }
+                transaction.Commit();
+            }
         }
         #endregion
     }

@@ -17,9 +17,9 @@ namespace Application_Sondage.Controllers
             return View();
         }
 
-        public ActionResult Resultat()
+        public ActionResult Resultat(int id)
         {
-            return View();
+            return View(id);
         }
 
         public ActionResult Desactiver(int id)
@@ -44,7 +44,7 @@ namespace Application_Sondage.Controllers
             ListeDeReponse.Add(reponseQuatre);
 
             List<string> ReponseNonNul = new List<string>();
-            foreach(var reponse in ListeDeReponse)
+            foreach (var reponse in ListeDeReponse)
             {
                 bool laReponseEstVide = string.IsNullOrWhiteSpace(reponse);
                 if (!laReponseEstVide)
@@ -69,15 +69,30 @@ namespace Application_Sondage.Controllers
 
         //Page d'accueil de création de sondage
         public ActionResult New()
-        {           
+        {
             return View();
         }
 
         //Page de vote
         public ActionResult Vote(int id)
         {
-            //Recupère le sondage en fonction de l'id
-            return View(DataAccess.RecupereSondageEnBDD(id));
+            if (DataAccess.CheckEtatSondageEnBDD(id) == true)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Le sondage est désactiver, vous pouvez uniquement accéder aux résultats.");
+            }
+            else
+            {
+                //Recupère le sondage en fonction de l'id
+                return View(DataAccess.RecupereSondageEnBDD(id));
+            }
+        }
+
+        public ActionResult ConfirmeVote(int id)
+        {
+
+
+           // DataAccess.AjouteUnOuPLusieursVotesEnBDD(id, IdChoix);
+            return RedirectToAction(nameof(Vote), new { ID = id });
         }
 
         //FONCTIONNE

@@ -100,8 +100,10 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\Choix.cs" />
     <Compile Include="Models\DataAccess.cs" />
     <Compile Include="Models\GenereCleUnique.cs" />
+    <Compile Include="Models\Resultat.cs" />
     <Compile Include="Models\Sondage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
