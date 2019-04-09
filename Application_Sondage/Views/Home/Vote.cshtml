@@ -3,6 +3,7 @@
 <div class="box">
     <h2>@Model.Question</h2>
     <form method="post" action="@Url.Action("ConfirmeVote", "Home")">
+        <input type="hidden" name="id" value="@Model.Id" />
         <ul>
             @{
                 foreach (var choix in Model.ListeDeChoix)
@@ -10,7 +11,7 @@
                     <li>
                         @{if (Model.ChoixMultiple)
                             {
-                                <input id="@choix.IdChoix" name="multiplchoise" value="@choix.ValeurChoix" type="checkbox">
+                                <input id="@choix.IdChoix" name="multiplechoise" value="@choix.ValeurChoix" type="checkbox">
                             }
                             else
                             {

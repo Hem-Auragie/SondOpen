@@ -1,0 +1,18 @@
+﻿@model int
+
+<section class="box">
+    <h2>CONFIRMATION</h2>
+    <b>Votre vote a bien été pris en compte.</b>
+    <br />
+    <b>Merci de votre fidélité !</b>
+    <div class="h_center">
+        <form action="@Url.Action("Index", "Home")">
+            <input type="submit" value="Retour accueil">
+        </form>
+    </div>
+    <div class="h_center">
+        <form action="@Url.Action("Resultat", "Home", new { id = Model })">
+            <input type="submit" value="Résultats">
+        </form>
+    </div>
+</section>

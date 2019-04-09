@@ -73,7 +73,7 @@ namespace Application_Sondage.Controllers
             return View();
         }
 
-        //Page de vote
+        //Page vote d'affichage
         public ActionResult Vote(int id)
         {
             if (DataAccess.CheckEtatSondageEnBDD(id) == true)
@@ -87,16 +87,26 @@ namespace Application_Sondage.Controllers
             }
         }
 
-        public ActionResult ConfirmeVote(int id)
+        //Le vote est ajouter sur cet page
+        public ActionResult ConfirmeVote(int id, List<string> multiplechoise)
         {
+            DataAccess.AjouteUnVotantAuSondage(id);
 
-
-           // DataAccess.AjouteUnOuPLusieursVotesEnBDD(id, IdChoix);
-            return RedirectToAction(nameof(Vote), new { ID = id });
+            foreach(var NomChoix in multiplechoise)
+            {
+                DataAccess.AjouteUnVoteEnBDD(id, NomChoix);
+            }
+  
+            return RedirectToAction(nameof(ConfirmationVote), new { ID = id });
         }
 
-        //FONCTIONNE
-        #region Page Optionnel
+        //Page de confirmation de vote
+        public ActionResult ConfirmationVote(int id)
+        {
+            return View(id);
+        }
+
+        #region Pages Optionnel
         public ActionResult Manuel()
         {
             return View();
