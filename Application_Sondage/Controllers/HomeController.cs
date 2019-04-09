@@ -19,7 +19,7 @@ namespace Application_Sondage.Controllers
 
         public ActionResult Resultat(int id)
         {
-            return View(id);
+            return View(DataAccess.RecupereReponseEtNombreVoteBDD(id));
         }
 
         public ActionResult Desactiver(int id)

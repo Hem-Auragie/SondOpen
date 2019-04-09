@@ -1,14 +1,16 @@
-﻿<div class="box">
-    <h3>Vous trouverez ci-dessous les résultats du sondage.</h3><br />
-    <b><u>Question du sondage:</u></b>
-    <br />
-    <p>Réponse 1<br /><progress id="avancement" value="0" max="100"></progress>0%<br />0 vote(s)</p>
-    <br />
-    <p>Réponse 2<br /><progress id="avancement" value="25" max="100"></progress>25%<br />1 vote(s)</p>
-    <br />
-    <p>Réponse 3<br /><progress id="avancement" value="50" max="50"></progress>50%<br />2 vote(s)</p>
-    <br />
-    <p>Réponse 4<br /><progress id="avancement" value="0" max="100"></progress>100%<br />0 vote(s)</p>
+﻿@model Application_Sondage.Models.Sondage
 
+<div class="box">
+    <h3>Vous trouverez ci-dessous les résultats du sondage.</h3><br />
+    <b><u>@Model.Question:</u></b>
+
+    @foreach (var choix in Model.ListeDeChoix)
+    {
+        <br />
+        <p>@choix.ValeurChoix<br /><progress id="avancement" value="@Model.PourcentageDeVote(choix.NombreVotes)" max="100"></progress>@Model.PourcentageDeVote(choix.NombreVotes)%<br />@choix.NombreVotes vote(s)</p>
+    }
+
+    <br />
+    <h3>Nombre de vote(s): <b>@Model.NombreVoteTotal</b></h3>
 </div>
 
