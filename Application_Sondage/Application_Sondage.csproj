@@ -125,6 +125,7 @@
     <Content Include="Views\Home\ErreurQuestionSondage.cshtml" />
     <Content Include="Views\Home\ErreurReponseSondage.cshtml" />
     <Content Include="Views\Home\ConfirmationDesactivation.cshtml" />
+    <Content Include="Views\Home\Erreur404.cshtml" />
     <None Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </None>

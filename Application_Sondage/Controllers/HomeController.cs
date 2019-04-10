@@ -22,26 +22,42 @@ namespace Application_Sondage.Controllers
             return View(DataAccess.RecupereReponseEtNombreVoteBDD(id));
         }
 
-        public ActionResult Desactiver(int id)
+        //[AFF] - Page principal désactivation sondage
+        #region Desactivation sondage
+        public ActionResult Desactiver(int id, int cle)
         {
-            return View(id);
+            //Regarde si le clé et l'id sont sur la même ligne dans la BDD 
+            if(DataAccess.CheckSiCleUniqueEstCorrect(id,cle) == true)
+            {
+                Sondage fusion = new Sondage(id,cle);
+                return View(fusion);
+            }
+            else
+            {
+                //Si pas cohérent retourne la page Erreur404
+                return RedirectToAction(nameof(Erreur404),new { ID = id });
+            }
         }
 
+        //[BDD] - Désactive le sondage à l'aide de l'id et la clé du sondage
+        public ActionResult DesactivationSondage(int id, int cle)
+        {
+            DataAccess.DesactiverUnSondageEnBDD(id,cle);
+            return RedirectToAction(nameof(ConfirmationDesactivation), new { id = id });
+        }
+
+        //[AFF] - Page de confirmation de désactivation
         public ActionResult ConfirmationDesactivation(int id)
         {
             return View(id);
         }
-
-        public ActionResult DesactivationSondage(int id)
-        {
-            DataAccess.DesactiverUnSondageEnBDD(id);
-            return RedirectToAction(nameof(ConfirmationDesactivation), new { ID = id });
-        }
+        #endregion
 
         //Mets aux liens l'id demander
-        public ActionResult Liens(int id)
+        public ActionResult Liens(int id, int cle)
         {
-            return View(id);
+            Sondage fusion = new Sondage(id,cle);
+            return View(fusion);
         }
 
         //Crée et stock le sondage en BDD
@@ -75,14 +91,22 @@ namespace Application_Sondage.Controllers
                 //return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Erreur veuillez entrez au moins 2 réponses.");
             }
 
-            int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ReponseNonNul);
-            return RedirectToAction(nameof(Liens), new { ID = id });
+            int cleUnique = DataAccess.GenereCleUnique();
+            int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ReponseNonNul, cleUnique);
+            return RedirectToAction(nameof(Liens), new { id = id, cle = cleUnique });
         }
 
         //[AFF] - Page création de sondage
         public ActionResult New()
         {
             return View();
+        }
+
+        #region Gestion des erreurs
+        //[AFF] - Page d'erreeur Erreur404
+        public ActionResult Erreur404(int id)
+        {
+            return View(id);
         }
 
         //[AFF] - Page d'erreur sondage Question
@@ -102,7 +126,9 @@ namespace Application_Sondage.Controllers
         {
             return View(id);
         }
+        #endregion
 
+        #region Gestion des votes
         //[AFF] - Page de vote
         public ActionResult Vote(int id)
         {
@@ -110,7 +136,7 @@ namespace Application_Sondage.Controllers
             if (DataAccess.CheckEtatSondageEnBDD(id) == true)
             {
                 //Renvoie la page ErreurDesactivé
-                return RedirectToAction(nameof(ErreurDesactiver), new { ID = id });
+                return RedirectToAction(nameof(ErreurDesactiver), new { id = id });
             }
             //Sinon
             else
@@ -141,6 +167,7 @@ namespace Application_Sondage.Controllers
         {
             return View(id);
         }
+        #endregion
 
         #region Pages Optionnel
         public ActionResult Manuel()

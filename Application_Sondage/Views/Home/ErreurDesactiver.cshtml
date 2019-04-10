@@ -11,7 +11,8 @@
         </form>
     </div>
     <div class="h_center">
-        <form action="@Url.Action("Resultat", "Home", new { id = Model })">
+        <form action="@Url.Action("Resultat", "Home")" method="get">
+            <input type="hidden" name="id" value="@Model">
             <input type="submit" value="Résultats">
         </form>
     </div>

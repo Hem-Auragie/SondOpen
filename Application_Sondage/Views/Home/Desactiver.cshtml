@@ -1,14 +1,14 @@
-﻿@model int
+﻿@model Application_Sondage.Models.Sondage
 
 <section class="box">
-    <!--<h2>Félicitation, votre sondage à bien étais désactiver.</h2>
-    <b>Les utilisateurs ne peuvent donc plus voter mais peuvent tout de même consulter les résultats de votre sondage.</b>-->
     <h2>Voulez-vous vraiment désactiver le sondage ?</h2>
     <h4>Cela entrainera un blocage des votes.</h4>
     <h4>Par ailleur vous pourez toujours consulter les résultat de celui-ci.</h4>
 
     <div class="h_center">
-        <form action="@Url.Action("DesactivationSondage", "Home",new { id = Model })">
+        <form action="@Url.Action("DesactivationSondage", "Home")" method="post">
+            <input type="hidden" name="id" value="@Model.Id">
+            <input type="hidden" name="cle" value="@Model.CleUniqueSondage">
             <input type="submit" value="Désactiver">
         </form>
     </div>

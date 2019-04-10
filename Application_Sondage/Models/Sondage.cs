@@ -13,6 +13,7 @@ namespace Application_Sondage.Models
         public bool ChoixMultiple { get; private set; }
         public bool EtatSondage { get; private set; }
         public  int NombreVoteTotal { get; private set; }
+        public int CleUniqueSondage { get; private set; }
 
         public Sondage(int id, string question, List<Choix> listeDeChoix, bool choixMultiple)
         {
@@ -27,6 +28,12 @@ namespace Application_Sondage.Models
             NombreVoteTotal = nombreVoteTotal;
         }
 
+        public Sondage(int id, int cleUnique)
+        {
+            Id = id;
+            CleUniqueSondage = cleUnique;
+        }
+
         public int PourcentageDeVote(int NombreDeVoteChoix)
         {
             int PourcentageVote;
@@ -39,7 +46,5 @@ namespace Application_Sondage.Models
                 return PourcentageVote = 0;
             }
         }
-
-
     }
 }

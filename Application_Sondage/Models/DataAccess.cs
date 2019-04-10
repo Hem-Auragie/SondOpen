@@ -87,7 +87,7 @@ namespace Application_Sondage.Models
         /// Ajoute un sondage à la base de données.
         /// Retourne l'id du sondage ajouté.
         /// </summary>
-        public static int AjouterUnSondageEnBDD(string Question, bool ChoixMultiple, List<string> IntituleChoix)
+        public static int AjouterUnSondageEnBDD(string Question, bool ChoixMultiple, List<string> IntituleChoix, int cleUnique)
         {
             int recupId;
 
@@ -98,10 +98,11 @@ namespace Application_Sondage.Models
                 var transaction = connection.BeginTransaction(IsolationLevel.Serializable);
 
                 //Ajoute le choix multiples et la question  dans la table sondage et stock l'id
-                using (SqlCommand command = new SqlCommand("INSERT INTO Sondage (ChoixMultiple,Question,NbVotes) OUTPUT INSERTED.IdSondage VALUES(@Choix, @Question,0)", connection, transaction))
+                using (SqlCommand command = new SqlCommand("INSERT INTO Sondage (ChoixMultiple,Question,NbVotes,CleUnique) OUTPUT INSERTED.IdSondage VALUES(@Choix, @Question, 0 , @CleUnique)", connection, transaction))
                 {
                     command.Parameters.AddWithValue("@Choix", ChoixMultiple);
                     command.Parameters.AddWithValue("@Question", Question);
+                    command.Parameters.AddWithValue("@CleUnique", cleUnique);
 
                     //Récupère l'id de l'insertion
                     recupId = (int)command.ExecuteScalar();
@@ -129,20 +130,51 @@ namespace Application_Sondage.Models
 
         //DESACTIVER UN SONDAGE
         #region [BDD]- Désactiver un sondage
-        public static void DesactiverUnSondageEnBDD(int Id)
+        /// <summary>
+        /// Désactive un sondage en fonction d'un ID
+        /// </summary>
+        public static void DesactiverUnSondageEnBDD(int Id, int CleUnique)
         {
             SqlConnection connection = new SqlConnection(ChaineConnexionBDD);
             connection.Open();
 
-            //Met le sondage en "True"
-            SqlCommand command = new SqlCommand("UPDATE Sondage SET Etat = 1  WHERE IdSondage = @IdSondage ", connection);
+            //Désactive le sondage si le clé unique et l'id corresponde.
+            SqlCommand command = new SqlCommand("UPDATE Sondage SET Etat = 1  WHERE IdSondage = @IdSondage AND CleUnique = @CleUnique ", connection);
             command.Parameters.AddWithValue("@IdSondage", Id);
+            command.Parameters.AddWithValue("@CleUnique", CleUnique);
             SqlDataReader DataReader = command.ExecuteReader();
         }
         #endregion
 
+        //CHECK SI LA CLE EST BIEN LA BONNE PAR RAPPORT A L'ID SONDAGE
+        public static bool CheckSiCleUniqueEstCorrect(int id, int cleUnique)
+        {
+            SqlConnection connection = new SqlConnection(ChaineConnexionBDD);
+            connection.Open();
+
+            //Désactive le sondage si le clé unique et l'id corresponde.
+            SqlCommand command = new SqlCommand("SELECT IdSondage, CleUnique FROM Sondage WHERE IdSondage = @IdSondage AND CleUnique = @CleUnique ", connection);
+            command.Parameters.AddWithValue("@IdSondage", id);
+            command.Parameters.AddWithValue("@CleUnique", cleUnique);
+            SqlDataReader DataReader = command.ExecuteReader();
+
+            if (DataReader.Read())
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
         //CHECK ETAT SONDAGE
         #region [BDD] Check l'état du sondage
+        /// <summary>
+        /// Regarde l'état du sondage en fonction de l'ID.
+        /// Si le sondage est désactiver renvoie une Exception. 
+        /// Sinon stock l'état et le renvoi.
+        /// </summary>
         public static bool CheckEtatSondageEnBDD(int Id)
         {
             bool recupEtat;
@@ -169,6 +201,11 @@ namespace Application_Sondage.Models
 
         //AJOUTE UN VOTANT SUR LE SONDAGE (SONDAGE)
         #region [BDD] - Ajoute un votant dans un sondage
+        /// <summary>
+        /// Regarde si l'ID existe dans la classe Sondage.
+        /// S'il n'existe pas renvoie une exception.
+        /// Sinon incrémente de 1 le nombre de votant dans la classe sondage.
+        /// </summary>
         public static void AjouteUnVotantAuSondage(int IdSondage)
         {
 
@@ -197,7 +234,12 @@ namespace Application_Sondage.Models
         #endregion
 
         //AJOUTE UN VOTE SUR LE SONDAGE (CHOIX)
-        #region [BDD]- Ajoute un vote dans un choix
+        #region [BDD] - Ajoute un vote dans un choix
+        /// <summary>
+        /// Regarde si l'ID existe dans la classe Sondage.
+        /// S'il n'existe pas renvoie une exception.
+        /// Sinon incrémente de 1 le nombre de votes de la réponse dans la classe choix.
+        /// </summary>
         public static void AjouteUnVoteEnBDD(int IdSondage, string NomChoix)
         {
             SqlConnection connection = new SqlConnection(ChaineConnexionBDD);
@@ -226,6 +268,12 @@ namespace Application_Sondage.Models
         #endregion
 
         //RECHERCHE LES REPONSES ET NOMBRE DE VOTE PAR REPONSE 
+        #region [BDD] - Ajoute et tri les réponse du sondage par ordre alphabétique
+        /// <summary>
+        /// Récupère la question, si c'est un choix multiple ou non et le nombre de votant du sondage.
+        /// Puis cherche les réponses et l'id de la réponse en les triant par ordre décroissant et en les insérant dans une liste.
+        /// Puis renvoi le sondage.
+        /// </summary>
         public static Sondage RecupereReponseEtNombreVoteBDD(int Id)
         {
             List<Choix> ReponsesCourante = new List<Choix>();
@@ -237,7 +285,7 @@ namespace Application_Sondage.Models
             {
                 connection.Open();
 
-                //Récupère la question et le type de choix
+                //Récupère la question et le type de choix et le nombre de votes.
                 SqlCommand command = new SqlCommand("SELECT Question, ChoixMultiple, Nbvotes FROM Sondage WHERE IdSondage =@id", connection);
                 command.Parameters.AddWithValue("@id", Id);
                 using (SqlDataReader DataReader = command.ExecuteReader())
@@ -254,7 +302,7 @@ namespace Application_Sondage.Models
                     }
                 }
 
-                //Prend les réponses trouvé et les insère dans la liste ReponseCourante
+                //Récupère l'ID, le nom de la réponse et le nombre de vote de la réponse et les insère dans une liste en les classant par ordre décroissant.
                 SqlCommand command2 = new SqlCommand("SELECT IdChoix, IntituleChoix, NbVotes FROM Choix WHERE FK_Id_Sondage =@id ORDER BY NbVotes DESC", connection);
                 command2.Parameters.AddWithValue("@id", Id);
                 using (SqlDataReader DataReader2 = command2.ExecuteReader())
@@ -275,5 +323,19 @@ namespace Application_Sondage.Models
 
             return RecupSonsage;
         }
+        #endregion
+
+        #region [BDD] - Genere un nombre aléatoire
+        /// <summary>
+        /// Génère un nombre aléatoire entre 1 et 1 000 000 000 puis le retourne.
+        /// </summary>
+        public static int GenereCleUnique()
+        {
+            Random nombre = new Random();
+            int nombreAleatoire = nombre.Next(1000000000);
+
+            return nombreAleatoire;
+        }
+        #endregion
     }
 }
