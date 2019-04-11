@@ -12,19 +12,22 @@ namespace Application_Sondage.Controllers
 {
     public class HomeController : Controller
     {
-        // GET: Home
+        //[AFF] - Page d'accueil
         public ActionResult Index()
         {
             return View();
         }
 
+        //[AFF] - Affiche la page résultat
         public ActionResult Resultat(int id)
         {
             return View(DataAccess.RecupereReponseEtNombreVoteBDD(id));
         }
 
-        //[AFF] - Page principal désactivation sondage
+        //ActionResult lié au désactivation d'un sondage
         #region Desactivation sondage
+
+        //[AFF] - Page principal désactivation sondage
         public ActionResult Desactiver(int id, int cle)
         {
             //Regarde si le clé et l'id sont sur la même ligne dans la BDD 
@@ -54,14 +57,15 @@ namespace Application_Sondage.Controllers
         }
         #endregion
 
-        //Mets aux liens l'id demander
+        //[AFF] - Affiche la page de lien avec l'id et la clé correspondante
         public ActionResult Liens(int id, int cle)
         {
             Sondage fusion = new Sondage(id,cle);
             return View(fusion);
         }
 
-        //Crée et stock le sondage en BDD
+        #region Création de sondage
+        //[BDD] - Ajoute un sondage 
         public ActionResult PosteNew(string question, string reponseUn, string reponseDeux, string reponseTrois, string reponseQuatre, bool? choixMultiple)
         {
             List<string> ListeDeReponse = new List<string>();
@@ -102,6 +106,7 @@ namespace Application_Sondage.Controllers
         {
             return View();
         }
+        #endregion
 
         #region Gestion des erreurs
         //[AFF] - Page d'erreeur Erreur404
@@ -198,8 +203,6 @@ namespace Application_Sondage.Controllers
             return View();
         }
         #endregion
-
-
 
         #region Enregistre un coockie avec l'id du sondage
         public void EnregistreUnVotantCookie(int id)
