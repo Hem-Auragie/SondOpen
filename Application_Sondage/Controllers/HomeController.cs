@@ -68,37 +68,42 @@ namespace Application_Sondage.Controllers
         //[BDD] - Ajoute un sondage 
         public ActionResult PosteNew(string question, string reponseUn, string reponseDeux, string reponseTrois, string reponseQuatre, bool? choixMultiple)
         {
-            List<string> ListeDeReponse = new List<string>();
-            ListeDeReponse.Add(reponseUn);
-            ListeDeReponse.Add(reponseDeux);
-            ListeDeReponse.Add(reponseTrois);
-            ListeDeReponse.Add(reponseQuatre);
-
-            List<string> ReponseNonNul = new List<string>();
-            foreach (var reponse in ListeDeReponse)
+            if (reponseUn != reponseDeux && reponseUn != reponseTrois && reponseUn != reponseQuatre && reponseDeux != reponseTrois && reponseDeux != reponseQuatre && reponseTrois != reponseQuatre)
             {
-                bool laReponseEstVide = string.IsNullOrWhiteSpace(reponse);
-                if (!laReponseEstVide)
+                List<string> ListeDeReponse = new List<string>();
+                ListeDeReponse.Add(reponseUn);
+                ListeDeReponse.Add(reponseDeux);
+                ListeDeReponse.Add(reponseTrois);
+                ListeDeReponse.Add(reponseQuatre);
+
+                List<string> ReponseNonNul = new List<string>();
+                foreach (var reponse in ListeDeReponse)
                 {
-                    ReponseNonNul.Add(reponse);
+                    bool laReponseEstVide = string.IsNullOrWhiteSpace(reponse);
+                    if (!laReponseEstVide)
+                    {
+                        ReponseNonNul.Add(reponse);
+                    }
                 }
-            }
 
-            if (string.IsNullOrWhiteSpace(question))
-            {
-                return RedirectToAction(nameof(ErreurQuestionSondage));
-                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Erreur veuillez entrez une question.");
-            }
+                if (string.IsNullOrWhiteSpace(question))
+                {
+                    return RedirectToAction(nameof(ErreurQuestionSondage));
+                }
 
-            if (ReponseNonNul.Count < 2)
+                if (ReponseNonNul.Count < 2)
+                {
+                    return RedirectToAction(nameof(ErreurReponseSondage));
+                }
+
+                int cleUnique = DataAccess.GenereCleUnique();
+                int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ReponseNonNul, cleUnique);
+                return RedirectToAction(nameof(Liens), new { id = id, cle = cleUnique });
+            }
+            else
             {
                 return RedirectToAction(nameof(ErreurReponseSondage));
-                //return new HttpStatusCodeResult(HttpStatusCode.BadRequest, "Erreur veuillez entrez au moins 2 réponses.");
             }
-
-            int cleUnique = DataAccess.GenereCleUnique();
-            int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ReponseNonNul, cleUnique);
-            return RedirectToAction(nameof(Liens), new { id = id, cle = cleUnique });
         }
 
         //[AFF] - Page création de sondage
