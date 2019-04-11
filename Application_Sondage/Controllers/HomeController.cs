@@ -31,22 +31,22 @@ namespace Application_Sondage.Controllers
         public ActionResult Desactiver(int id, int cle)
         {
             //Regarde si le clé et l'id sont sur la même ligne dans la BDD 
-            if(DataAccess.CheckSiCleUniqueEstCorrect(id,cle) == true)
+            if (DataAccess.CheckSiCleUniqueEstCorrect(id, cle) == true)
             {
-                Sondage fusion = new Sondage(id,cle);
+                Sondage fusion = new Sondage(id, cle);
                 return View(fusion);
             }
             else
             {
                 //Si pas cohérent retourne la page Erreur404
-                return RedirectToAction(nameof(Erreur404),new { ID = id });
+                return RedirectToAction(nameof(Erreur404), new { ID = id });
             }
         }
 
         //[BDD] - Désactive le sondage à l'aide de l'id et la clé du sondage
         public ActionResult DesactivationSondage(int id, int cle)
         {
-            DataAccess.DesactiverUnSondageEnBDD(id,cle);
+            DataAccess.DesactiverUnSondageEnBDD(id, cle);
             return RedirectToAction(nameof(ConfirmationDesactivation), new { id = id });
         }
 
@@ -60,7 +60,7 @@ namespace Application_Sondage.Controllers
         //[AFF] - Affiche la page de lien avec l'id et la clé correspondante
         public ActionResult Liens(int id, int cle)
         {
-            Sondage fusion = new Sondage(id,cle);
+            Sondage fusion = new Sondage(id, cle);
             return View(fusion);
         }
 
@@ -68,42 +68,37 @@ namespace Application_Sondage.Controllers
         //[BDD] - Ajoute un sondage 
         public ActionResult PosteNew(string question, string reponseUn, string reponseDeux, string reponseTrois, string reponseQuatre, bool? choixMultiple)
         {
-            if (reponseUn != reponseDeux && reponseUn != reponseTrois && reponseUn != reponseQuatre && reponseDeux != reponseTrois && reponseDeux != reponseQuatre && reponseTrois != reponseQuatre)
+            List<string> ListeDeReponse = new List<string>();
+            ListeDeReponse.Add(reponseUn);
+            ListeDeReponse.Add(reponseDeux);
+            ListeDeReponse.Add(reponseTrois);
+            ListeDeReponse.Add(reponseQuatre);
+
+            List<string> ReponseNonNul = new List<string>();
+            foreach (var reponse in ListeDeReponse)
             {
-                List<string> ListeDeReponse = new List<string>();
-                ListeDeReponse.Add(reponseUn);
-                ListeDeReponse.Add(reponseDeux);
-                ListeDeReponse.Add(reponseTrois);
-                ListeDeReponse.Add(reponseQuatre);
-
-                List<string> ReponseNonNul = new List<string>();
-                foreach (var reponse in ListeDeReponse)
+                bool laReponseEstVide = string.IsNullOrWhiteSpace(reponse);
+                if (!laReponseEstVide)
                 {
-                    bool laReponseEstVide = string.IsNullOrWhiteSpace(reponse);
-                    if (!laReponseEstVide)
-                    {
-                        ReponseNonNul.Add(reponse);
-                    }
+                    ReponseNonNul.Add(reponse);
                 }
-
-                if (string.IsNullOrWhiteSpace(question))
-                {
-                    return RedirectToAction(nameof(ErreurQuestionSondage));
-                }
-
-                if (ReponseNonNul.Count < 2)
-                {
-                    return RedirectToAction(nameof(ErreurReponseSondage));
-                }
-
-                int cleUnique = DataAccess.GenereCleUnique();
-                int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ReponseNonNul, cleUnique);
-                return RedirectToAction(nameof(Liens), new { id = id, cle = cleUnique });
             }
-            else
+
+            if (string.IsNullOrWhiteSpace(question))
+            {
+                return RedirectToAction(nameof(ErreurQuestionSondage));
+            }
+
+            List<string> ListeSansDoublons = ReponseNonNul.Distinct().ToList();
+
+            if (ListeSansDoublons.Count < 2)
             {
                 return RedirectToAction(nameof(ErreurReponseSondage));
             }
+
+            int cleUnique = DataAccess.GenereCleUnique();
+            int id = DataAccess.AjouterUnSondageEnBDD(question, choixMultiple.GetValueOrDefault(false), ListeSansDoublons, cleUnique);
+            return RedirectToAction(nameof(Liens), new { id = id, cle = cleUnique });
         }
 
         //[AFF] - Page création de sondage
@@ -175,11 +170,11 @@ namespace Application_Sondage.Controllers
             DataAccess.AjouteUnVotantAuSondage(id);
 
             //Pour chaque réponse cocher, incrémente de 1 le nombre de vote dans la table Choix
-            foreach(var NomChoix in multiplechoise)
+            foreach (var NomChoix in multiplechoise)
             {
                 DataAccess.AjouteUnVoteEnBDD(id, NomChoix);
             }
-  
+
             //Retourne automatiquement vers la page de Confirmation de vote.
             return RedirectToAction(nameof(ConfirmationVote), new { ID = id });
         }
