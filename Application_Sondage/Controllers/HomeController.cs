@@ -7,6 +7,7 @@ using System.Data.SqlClient;
 using Application_Sondage.Models;
 using System.Net;
 
+
 namespace Application_Sondage.Controllers
 {
     public class HomeController : Controller
@@ -109,6 +110,11 @@ namespace Application_Sondage.Controllers
             return View(id);
         }
 
+        public ActionResult ErreurDejaVote(int id)
+        {
+            return View(id);
+        }
+
         //[AFF] - Page d'erreur sondage Question
         public ActionResult ErreurQuestionSondage()
         {
@@ -138,6 +144,11 @@ namespace Application_Sondage.Controllers
                 //Renvoie la page ErreurDesactivé
                 return RedirectToAction(nameof(ErreurDesactiver), new { id = id });
             }
+            //Vérifie si la personne a déjà voter
+            if (VerifieSiDejaVoterCookie(Request.Cookies, id))
+            {
+                return RedirectToAction("ErreurDejaVote", new { id = id });
+            }
             //Sinon
             else
             {
@@ -149,6 +160,7 @@ namespace Application_Sondage.Controllers
         //[BDD] - Ajoute des votes
         public ActionResult ConfirmeVote(int id, List<string> multiplechoise)
         {
+            EnregistreUnVotantCookie(id);
             //Ajoute un votant dans la base de données dans la table sondage
             DataAccess.AjouteUnVotantAuSondage(id);
 
@@ -184,6 +196,26 @@ namespace Application_Sondage.Controllers
         {
             //Affiche la page Propos
             return View();
+        }
+        #endregion
+
+
+
+        #region Enregistre un coockie avec l'id du sondage
+        public void EnregistreUnVotantCookie(int id)
+        {
+            string Votant = Request.UserHostAddress;
+            HttpCookie cookie = new HttpCookie("CookieUser" + id);
+            cookie.Value = "";
+            cookie.Expires = DateTime.MaxValue;
+            this.Response.Cookies.Add(cookie);
+        }
+        #endregion
+
+        #region Regarde si la personne a déjà voter
+        public static bool VerifieSiDejaVoterCookie(HttpCookieCollection cookies, int id)
+        {
+            return cookies["cookieUser" + id] != null;
         }
         #endregion
     }

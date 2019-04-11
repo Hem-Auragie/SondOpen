@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Specialized;
 using System.Linq;
 using System.Web;
 using System.Data.SqlClient;
@@ -147,6 +148,7 @@ namespace Application_Sondage.Models
         #endregion
 
         //CHECK SI LA CLE EST BIEN LA BONNE PAR RAPPORT A L'ID SONDAGE
+        #region [BDD] - Regarde si la clé correspond à l'id 
         public static bool CheckSiCleUniqueEstCorrect(int id, int cleUnique)
         {
             SqlConnection connection = new SqlConnection(ChaineConnexionBDD);
@@ -167,6 +169,7 @@ namespace Application_Sondage.Models
                 return false;
             }
         }
+        #endregion
 
         //CHECK ETAT SONDAGE
         #region [BDD] Check l'état du sondage
@@ -325,7 +328,8 @@ namespace Application_Sondage.Models
         }
         #endregion
 
-        #region [BDD] - Genere un nombre aléatoire
+        //FONCTION AUTRE
+        #region Génère un nombre aléatoire
         /// <summary>
         /// Génère un nombre aléatoire entre 1 et 1 000 000 000 puis le retourne.
         /// </summary>
