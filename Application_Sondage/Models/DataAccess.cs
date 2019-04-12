@@ -38,13 +38,14 @@ namespace Application_Sondage.Models
             List<Choix> ReponsesCourante = new List<Choix>();
             string Question = string.Empty;
             bool ChoixMultiple;
+            int NbVotes;
 
             using (SqlConnection connection = new SqlConnection(ChaineConnexionBDD))
             {
                 connection.Open();
 
                 //Récupère la question et le type de choix
-                SqlCommand command = new SqlCommand("SELECT Question, ChoixMultiple FROM Sondage WHERE IdSondage =@id", connection);
+                SqlCommand command = new SqlCommand("SELECT Question, ChoixMultiple, NbVotes FROM Sondage WHERE IdSondage =@id", connection);
                 command.Parameters.AddWithValue("@id", Id);
                 using (SqlDataReader DataReader = command.ExecuteReader())
                 {
@@ -52,6 +53,8 @@ namespace Application_Sondage.Models
                     {
                         Question = (string)DataReader["Question"];
                         ChoixMultiple = (bool)DataReader["ChoixMultiple"];
+                        NbVotes = (int)DataReader["NbVotes"];
+
                     }
                     else
                     {
@@ -76,7 +79,7 @@ namespace Application_Sondage.Models
                 }
             }
 
-            Sondage RecupSonsage = new Sondage(Id, Question, ReponsesCourante, ChoixMultiple);
+            Sondage RecupSonsage = new Sondage(Id, Question, ReponsesCourante, ChoixMultiple, NbVotes);
 
             return RecupSonsage;
         }
