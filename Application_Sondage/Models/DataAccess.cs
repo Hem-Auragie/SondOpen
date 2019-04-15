@@ -24,7 +24,7 @@ namespace Application_Sondage.Models
     public class DataAccess
     {
         //CHEMIN BASE DE DONNEES
-        const string ChaineConnexionBDD = @"Server=.\SQLEXPRESS;Database=SondOpen;Integrated Security = true";
+        public const string ChaineConnexionBDD = @"Server=.\SQLEXPRESS;Database=SondOpen;Integrated Security = true";
 
         //REQUETE QUI RECUPERE UN SONDAGE
         #region [BDD] - Recupère un sondage existant
@@ -342,6 +342,29 @@ namespace Application_Sondage.Models
             int nombreAleatoire = nombre.Next(1000000000);
 
             return nombreAleatoire;
+        }
+        #endregion
+
+        #region [BDD] Test de connexion
+        /// <summary>
+        /// Fonction servant à tester si la base de données fonctionne
+        /// </summary>
+        public static bool TestDeConnexionBaseDeDonnees(string CheminBDD)
+        {
+            bool resultat = false;
+            try
+            {
+                using (SqlConnection db = new SqlConnection(CheminBDD))
+                {
+                    db.Open();
+                    resultat = true;
+                }
+                return resultat;
+            }
+            catch (Exception)
+            {
+                return resultat;
+            }
         }
         #endregion
     }
