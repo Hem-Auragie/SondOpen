@@ -24,10 +24,10 @@ namespace Application_Sondage.Controllers
             return View(DataAccess.RecupereReponseEtNombreVoteBDD(id));
         }
 
-        //ActionResult lié au désactivation d'un sondage
+        //ActionResult lié à la désactivation d'un sondage
         #region Desactivation sondage
 
-        //[AFF] - Page principal désactivation sondage
+        //[AFF] - Page principale désactivation sondage
         public ActionResult Desactiver(int id, int cle)
         {
             //Regarde si le clé et l'id sont sur la même ligne dans la BDD 
@@ -38,7 +38,7 @@ namespace Application_Sondage.Controllers
             }
             else
             {
-                //Si pas cohérent retourne la page Erreur404
+                //Si ce n'est pas cohérent renvoie sur la page "Erreur404"
                 return RedirectToAction(nameof(Erreur404), new { ID = id });
             }
         }
@@ -101,7 +101,7 @@ namespace Application_Sondage.Controllers
             return RedirectToAction(nameof(Liens), new { id = id, cle = cleUnique });
         }
 
-        //[AFF] - Page création de sondage
+        //[AFF] - Page de création de sondage
         public ActionResult New()
         {
             return View();
@@ -109,7 +109,7 @@ namespace Application_Sondage.Controllers
         #endregion
 
         #region Gestion des erreurs
-        //[AFF] - Page d'erreeur Erreur404
+        //[AFF] - Page d'erreur Erreur404
         public ActionResult Erreur404(int id)
         {
             return View(id);
@@ -126,7 +126,7 @@ namespace Application_Sondage.Controllers
             return View();
         }
 
-        //[AFF] - Page d'erreur sondage Reponse
+        //[AFF] - Page d'erreur sondage Réponse
         public ActionResult ErreurReponseSondage()
         {
             return View();
@@ -143,13 +143,13 @@ namespace Application_Sondage.Controllers
         //[AFF] - Page de vote
         public ActionResult Vote(int id)
         {
-            //Si le sondage est désactiver 
+            //Si le sondage est désactivé
             if (DataAccess.CheckEtatSondageEnBDD(id) == true)
             {
-                //Renvoie la page ErreurDesactivé
+                //Renvoie sur la page ErreurDesactivé
                 return RedirectToAction(nameof(ErreurDesactiver), new { id = id });
             }
-            //Vérifie si la personne a déjà voter
+            //Vérifie si la personne a déjà voté
             if (VerifieSiDejaVoterCookie(Request.Cookies, id))
             {
                 return RedirectToAction("ErreurDejaVote", new { id = id });
@@ -166,10 +166,10 @@ namespace Application_Sondage.Controllers
         public ActionResult ConfirmeVote(int id, List<string> multiplechoise)
         {
             EnregistreUnVotantCookie(id);
-            //Ajoute un votant dans la base de données dans la table sondage
+            //Ajoute un votant dans la base de données de la table sondage
             DataAccess.AjouteUnVotantAuSondage(id);
 
-            //Pour chaque réponse cocher, incrémente de 1 le nombre de vote dans la table Choix
+            //Pour chaque réponse cochée, incrémente de 1 le nombre de vote dans la table Choix
             foreach (var NomChoix in multiplechoise)
             {
                 DataAccess.AjouteUnVoteEnBDD(id, NomChoix);
@@ -186,7 +186,7 @@ namespace Application_Sondage.Controllers
         }
         #endregion
 
-        #region Pages Optionnel
+        #region Pages Optionnelles
         public ActionResult Manuel()
         {
             return View();
@@ -215,7 +215,7 @@ namespace Application_Sondage.Controllers
         }
         #endregion
 
-        #region Regarde si la personne a déjà voter
+        #region Vérifie si la personne a déjà voté
         public static bool VerifieSiDejaVoterCookie(HttpCookieCollection cookies, int id)
         {
             return cookies["cookieUser" + id] != null;
