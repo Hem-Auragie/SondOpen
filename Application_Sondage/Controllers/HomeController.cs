@@ -165,18 +165,26 @@ namespace Application_Sondage.Controllers
         //[BDD] - Ajoute des votes
         public ActionResult ConfirmeVote(int id, List<string> multiplechoise)
         {
-            EnregistreUnVotantCookie(id);
-            //Ajoute un votant dans la base de données de la table sondage
-            DataAccess.AjouteUnVotantAuSondage(id);
-
-            //Pour chaque réponse cochée, incrémente de 1 le nombre de vote dans la table Choix
-            foreach (var NomChoix in multiplechoise)
+            //Vérifie si la personne a déjà voté
+            if (VerifieSiDejaVoterCookie(Request.Cookies, id))
             {
-                DataAccess.AjouteUnVoteEnBDD(id, NomChoix);
+                return RedirectToAction("ErreurDejaVote", new { id = id });
             }
+            else
+            {
+                EnregistreUnVotantCookie(id);
+                //Ajoute un votant dans la base de données de la table sondage
+                DataAccess.AjouteUnVotantAuSondage(id);
 
-            //Retourne automatiquement vers la page de Confirmation de vote.
-            return RedirectToAction(nameof(ConfirmationVote), new { ID = id });
+                //Pour chaque réponse cochée, incrémente de 1 le nombre de vote dans la table Choix
+                foreach (var NomChoix in multiplechoise)
+                {
+                    DataAccess.AjouteUnVoteEnBDD(id, NomChoix);
+                }
+
+                //Retourne automatiquement vers la page de Confirmation de vote.
+                return RedirectToAction(nameof(ConfirmationVote), new { ID = id });
+            }  
         }
 
         //[AFF] - Page de confirmation de vote
